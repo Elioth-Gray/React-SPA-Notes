@@ -12,8 +12,6 @@ const DetailPage = () => {
     return <p>Catatan tidak ditemukan</p>;
   }
 
-  console.log(note);
-
   return <NoteDetail {...note}></NoteDetail>;
 };
 

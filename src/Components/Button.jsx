@@ -14,7 +14,7 @@ const Button = ({ types = "none", onAction, children }) => {
 
 Button.propTypes = {
   types: PropTypes.oneOf(["archive", "unarchive", "delete", "none"]),
-  onAction: PropTypes.func.isRequired,
+  onAction: PropTypes.func,
   children: PropTypes.node,
 };
 

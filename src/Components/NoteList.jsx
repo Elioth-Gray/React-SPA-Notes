@@ -27,9 +27,9 @@ NoteList.propTypes = {
       body: PropTypes.string.isRequired,
     })
   ).isRequired,
-  onDelete: PropTypes.func.isRequired,
-  onArchive: PropTypes.func.isRequired,
-  archived: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func,
+  onArchive: PropTypes.func,
+  archived: PropTypes.bool,
 };
 
 export default NoteList;

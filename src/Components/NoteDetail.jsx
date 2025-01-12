@@ -3,6 +3,10 @@ import PropTypes from "prop-types";
 import { showFormattedDate } from "../utils";
 
 const NoteDetail = (note) => {
+  if (note === undefined) {
+    return <p>Detail tidak ditemukan</p>;
+  }
+
   return (
     <section>
       <h1 className="detail-page__title">{note.title}</h1>
@@ -16,9 +20,9 @@ const NoteDetail = (note) => {
 
 NoteDetail.propTypes = {
   note: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired,
-    body: PropTypes.string.isRequired,
-  }).isRequired,
+    title: PropTypes.string,
+    createdAt: PropTypes.string,
+    body: PropTypes.string,
+  }),
 };
 export default NoteDetail;

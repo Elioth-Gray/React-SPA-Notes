@@ -61,18 +61,9 @@ class HomePage extends React.Component {
   }
 
   render() {
-    console.log(this.state.notes);
     const updateNote = this.state.notes.filter((note) =>
       note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
     );
-
-    if (updateNote.length === 0) {
-      return (
-        <header>
-          <h1>Catatan Kosong!</h1>
-        </header>
-      );
-    }
 
     return (
       <>
@@ -80,11 +71,15 @@ class HomePage extends React.Component {
           keyword={this.state.keyword}
           keywordChange={this.onChangeSearchParams}
         ></SearchBar>
-        <NoteList
-          notes={updateNote}
-          onDelete={this.onDeleteHandler}
-          onArchive={this.onArchiveHandler}
-        ></NoteList>
+        {updateNote.length > 0 ? (
+          <NoteList
+            notes={updateNote}
+            onDelete={this.onDeleteHandler}
+            onArchive={this.onArchiveHandler}
+          />
+        ) : (
+          <p>Catatan Tidak Ditemukan</p>
+        )}
       </>
     );
   }

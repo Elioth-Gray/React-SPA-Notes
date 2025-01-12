@@ -65,18 +65,9 @@ class ArchivedPage extends React.Component {
   }
 
   render() {
-    console.log(this.state.notes);
     const updateNote = this.state.notes.filter((note) =>
       note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
     );
-
-    if (updateNote.length === 0) {
-      return (
-        <header>
-          <h1>Arsip Kosong!</h1>
-        </header>
-      );
-    }
 
     return (
       <>
@@ -84,12 +75,15 @@ class ArchivedPage extends React.Component {
           keyword={this.state.keyword}
           keywordChange={this.onChangeSearchParams}
         ></SearchBar>
-        <NoteList
-          notes={updateNote}
-          onDelete={this.onDeleteHandler}
-          onArchive={this.onUnarchiveHandler}
-          archived={true}
-        ></NoteList>
+        {updateNote.length > 0 ? (
+          <NoteList
+            notes={updateNote}
+            onDelete={this.onDeleteHandler}
+            onArchive={this.onArchiveHandler}
+          />
+        ) : (
+          <p>Arsip Tidak Ditemukan</p>
+        )}
       </>
     );
   }
