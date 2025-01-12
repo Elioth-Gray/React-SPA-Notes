@@ -3,6 +3,7 @@ import { archiveNote, deleteNote, getActiveNotes } from "../utils/local-data";
 import NoteList from "../Components/NoteList";
 import { useSearchParams } from "react-router-dom";
 import SearchBar from "../Components/SearchBar";
+import PropTypes from "prop-types";
 
 const HomePageWrapper = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -64,6 +65,15 @@ class HomePage extends React.Component {
     const updateNote = this.state.notes.filter((note) =>
       note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
     );
+
+    if (updateNote.length === 0) {
+      return (
+        <header>
+          <h1>Catatan Kosong!</h1>
+        </header>
+      );
+    }
+
     return (
       <>
         <SearchBar

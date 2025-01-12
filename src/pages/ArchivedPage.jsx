@@ -71,7 +71,11 @@ class ArchivedPage extends React.Component {
     );
 
     if (updateNote.length === 0) {
-      return <p>Arsip Kosong</p>;
+      return (
+        <header>
+          <h1>Arsip Kosong!</h1>
+        </header>
+      );
     }
 
     return (
