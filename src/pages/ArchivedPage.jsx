@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
+  archiveNote,
   deleteNote,
   getArchivedNotes,
   unarchiveNote,
@@ -9,89 +10,61 @@ import { useSearchParams } from "react-router-dom";
 import SearchBar from "../Components/SearchBar";
 import PropTypes from "prop-types";
 
-const ArchivedPageWrapper = () => {
+const ArchivedPage = () => {
+  const [notes, setNotes] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const activeKeyword = searchParams.get("title");
+  useEffect(() => {
+    const archivedNotes = getArchivedNotes();
+    setNotes(archivedNotes);
+  }, []);
 
-  const changeSearchParams = (keyword) => {
+  useEffect(() => {
+    const archivedNotes = getArchivedNotes();
+    if (searchParams.has("title")) {
+      const updatedNotes = archivedNotes.filter((note) =>
+        note.title
+          .toLowerCase()
+          .includes(searchParams.get("title").toLowerCase())
+      );
+      setNotes(updatedNotes);
+    } else {
+      setNotes(archivedNotes);
+    }
+  }, [searchParams]);
+
+  const onChangeSearchParams = (keyword) => {
     setSearchParams({ title: keyword });
   };
 
+  const onDeleteHandler = (id) => {
+    const updatedNotes = deleteNote(id);
+    setNotes(updatedNotes);
+  };
+
+  const onUnarchiveHandler = (id) => {
+    unarchiveNote(id);
+    const updatedNotes = getArchivedNotes();
+    setNotes(updatedNotes);
+  };
+
   return (
-    <ArchivedPage
-      defaultKeyword={activeKeyword}
-      changeParams={changeSearchParams}
-    ></ArchivedPage>
+    <>
+      <SearchBar
+        keyword={searchParams.get("title") || ""}
+        keywordChange={onChangeSearchParams}
+      ></SearchBar>
+      {notes.length > 0 ? (
+        <NoteList
+          notes={notes}
+          onDelete={onDeleteHandler}
+          onArchive={onUnarchiveHandler}
+        />
+      ) : (
+        <p>Arsip Tidak Ditemukan</p>
+      )}
+    </>
   );
 };
 
-class ArchivedPage extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      notes: getArchivedNotes(),
-      keyword: this.props.defaultKeyword || "",
-    };
-
-    this.onDeleteHandler = this.onDeleteHandler.bind(this);
-    this.onChangeSearchParams = this.onChangeSearchParams.bind(this);
-    this.onUnarchiveHandler = this.onUnarchiveHandler.bind(this);
-  }
-
-  onDeleteHandler(id) {
-    deleteNote(id);
-    this.setState({
-      notes: getArchivedNotes(),
-    });
-  }
-
-  onUnarchiveHandler(id) {
-    unarchiveNote(id);
-    this.setState({
-      notes: getArchivedNotes(),
-    });
-  }
-
-  onChangeSearchParams(keywordChange) {
-    this.setState(() => {
-      return {
-        keyword: keywordChange,
-      };
-    });
-
-    this.props.changeParams(keywordChange);
-  }
-
-  render() {
-    const updateNote = this.state.notes.filter((note) =>
-      note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
-    );
-
-    return (
-      <>
-        <SearchBar
-          keyword={this.state.keyword}
-          keywordChange={this.onChangeSearchParams}
-        ></SearchBar>
-        {updateNote.length > 0 ? (
-          <NoteList
-            notes={updateNote}
-            onDelete={this.onDeleteHandler}
-            onArchive={this.onArchiveHandler}
-          />
-        ) : (
-          <p>Arsip Tidak Ditemukan</p>
-        )}
-      </>
-    );
-  }
-}
-
-ArchivedPage.propTypes = {
-  changeParams: PropTypes.func.isRequired,
-  defaultKeyword: PropTypes.string,
-};
-
-export default ArchivedPageWrapper;
+export default ArchivedPage;

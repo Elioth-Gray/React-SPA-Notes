@@ -18,18 +18,18 @@ const NoteList = ({ notes, onDelete, onArchive, archived }) => {
   );
 };
 
-NoteList.propTypes = {
-  notes: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      createdAt: PropTypes.string.isRequired,
-      body: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onDelete: PropTypes.func,
-  onArchive: PropTypes.func,
-  archived: PropTypes.bool,
-};
+// NoteList.propTypes = {
+//   notes: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.string.isRequired,
+//       title: PropTypes.string.isRequired,
+//       createdAt: PropTypes.string.isRequired,
+//       body: PropTypes.string.isRequired,
+//     })
+//   ).isRequired,
+//   onDelete: PropTypes.func,
+//   onArchive: PropTypes.func,
+//   archived: PropTypes.bool,
+// };
 
 export default NoteList;

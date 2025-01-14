@@ -1,77 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import NoteInput from "../Components/NoteInput";
 import { addNote } from "../utils/local-data";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
-function AddPageWrapper() {
+const AddPage = () => {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
   const navigate = useNavigate();
 
-  const saveNoteHandler = (note) => {
-    addNote(note);
-    navigate("/");
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    if (title !== "" && body !== "") {
+      addNote({ title, body });
+      navigate("/");
+    } else {
+      alert("Judul dan deksripsi harus diisi");
+    }
   };
 
-  return <AddPage onSubmitNoteHandler={saveNoteHandler} />;
-}
+  const onTitleChangeHandler = (newTitle) => {
+    setTitle(newTitle);
+  };
 
-class AddPage extends React.Component {
-  constructor(props) {
-    super(props);
+  const onBodyChangeHandler = (newBody) => {
+    setBody(newBody);
+  };
 
-    this.state = {
-      title: "",
-      body: "",
-    };
-
-    this.onTitleChangeHandler = this.onTitleChangeHandler.bind(this);
-    this.onBodyChangeHandler = this.onBodyChangeHandler.bind(this);
-    this.onSubmitHandler = this.onSubmitHandler.bind(this);
-  }
-
-  onTitleChangeHandler(newTitle) {
-    this.setState(() => {
-      return {
-        title: newTitle,
-      };
-    });
-  }
-
-  onBodyChangeHandler(newBody) {
-    this.setState(() => {
-      return {
-        body: newBody,
-      };
-    });
-  }
-
-  onSubmitHandler(event) {
-    event.preventDefault();
-    if (this.state.title.trim() !== "" && this.state.body.trim() !== "") {
-      this.props.onSubmitNoteHandler(this.state);
-    } else {
-      alert("Judul dan Deskripsi harus diisi!");
-    }
-  }
-
-  render() {
-    return (
-      <section>
-        <div>
-          <h1>Add New Notes</h1>
-        </div>
-        <NoteInput
-          onBodyChange={this.onBodyChangeHandler}
-          onSubmitAction={this.onSubmitHandler}
-          onTitleChange={this.onTitleChangeHandler}
-        />
-      </section>
-    );
-  }
-}
-
-AddPage.propTypes = {
-  onSubmitNoteHandler: PropTypes.func.isRequired,
+  return (
+    <section>
+      <div>
+        <h1>Add New Notes</h1>
+      </div>
+      <NoteInput
+        onBodyChange={onBodyChangeHandler}
+        onSubmitAction={onSubmitHandler}
+        onTitleChange={onTitleChangeHandler}
+      />
+    </section>
+  );
 };
 
-export default AddPageWrapper;
+export default AddPage;

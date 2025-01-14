@@ -1,12 +1,11 @@
 import React from "react";
 import Navigation from "./Components/Navigation";
 import { Route, Routes } from "react-router-dom";
-import HomePageWrapper from "./pages/HomePage";
-import ArchivedPageWrapper from "./pages/ArchivedPage";
+import ArchivedPage from "./pages/ArchivedPage";
 import DetailPage from "./pages/DetailPage";
-import AddPage from "./pages/AddPage";
-import AddPageWrapper from "./pages/AddPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import HomePage from "./pages/HomePage";
+import AddPage from "./pages/AddPage";
 
 function App() {
   return (
@@ -17,19 +16,16 @@ function App() {
       </header>
       <main>
         <Routes>
-          <Route path="/" element={<HomePageWrapper></HomePageWrapper>}></Route>
+          <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route
             path="/archived"
-            element={<ArchivedPageWrapper></ArchivedPageWrapper>}
+            element={<ArchivedPage></ArchivedPage>}
           ></Route>
           <Route
             path="/details/:noteId"
             element={<DetailPage></DetailPage>}
           ></Route>
-          <Route
-            path="/add"
-            element={<AddPageWrapper></AddPageWrapper>}
-          ></Route>
+          <Route path="/add" element={<AddPage></AddPage>}></Route>
           <Route path="/*" element={<NotFoundPage></NotFoundPage>}></Route>
         </Routes>
       </main>
