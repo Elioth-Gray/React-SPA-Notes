@@ -9,9 +9,11 @@ const RegisterPage = () => {
 
   const onRegisterHandler = async ({ email, name, password }) => {
     setLoading(true);
-    await register({ email, name, password });
+    const { error } = await register({ email, name, password });
     setLoading(false);
-    navigate("/");
+    if (!error) {
+      navigate("/");
+    }
   };
 
   return (
