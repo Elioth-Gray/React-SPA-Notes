@@ -72,6 +72,10 @@ const Navigation = ({ user, logout }) => {
             {theme === "dark" ? <FiMoon /> : <FiSun />}
           </button>
           <button className="button-logout" type="button" onClick={logout}>
+            <p>
+              {locale === "id" ? "masuk sebagai: " : "logged in as: "}
+              {user.name}
+            </p>
             <FiLogOut />
           </button>
         </>

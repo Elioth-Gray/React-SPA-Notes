@@ -55,8 +55,8 @@ header h1 {
 .navigation {
   display: flex;
   flex-direction: row;
-  justify-content: center; /* Menyusun item secara horizontal di tengah */
-  align-items: center; /* Menyusun item secara vertikal di tengah */
+  justify-content: center; 
+  align-items: center;
 }
 
 header .navigation ul li {
@@ -342,6 +342,7 @@ main {
 .button-logout {
   display: flex;
   align-items: center;
+  justify-ccontent: center
   gap: 8px;
   background-color: transparent;
   border: 0;
