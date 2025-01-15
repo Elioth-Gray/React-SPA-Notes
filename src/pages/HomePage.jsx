@@ -1,45 +1,69 @@
-import { useState, useEffect } from "react";
-import { archiveNote, deleteNote, getActiveNotes } from "../utils/local-data";
+import { useState, useEffect, useContext } from "react";
 import NoteList from "../Components/NoteList";
 import { useSearchParams } from "react-router-dom";
 import SearchBar from "../Components/SearchBar";
+import { getActiveNotes, archiveNote, deleteNote } from "../utils/api";
+import LocaleContext from "../Contexts/LocaleContext";
 
 const HomePage = () => {
   const [notes, setNotes] = useState([]);
+  const [allNotes, setAllNotes] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(true);
+  const { locale } = useContext(LocaleContext);
 
   useEffect(() => {
-    const activeNotes = getActiveNotes();
-    setNotes(activeNotes);
+    const fetchNotes = async () => {
+      const { error, data } = await getActiveNotes();
+      if (!error) {
+        setAllNotes(data);
+        setNotes(data);
+      }
+      setLoading(false);
+    };
+    fetchNotes();
+    return () => {
+      setNotes([]);
+      setAllNotes([]);
+    };
   }, []);
 
   useEffect(() => {
-    const activeNotes = getActiveNotes();
-    if (searchParams.has("title")) {
-      const filteredNotes = activeNotes.filter((note) =>
-        note.title
-          .toLowerCase()
-          .includes(searchParams.get("title").toLowerCase())
+    const keyword = searchParams.get("title") || "";
+    if (keyword) {
+      const filteredNotes = allNotes.filter((note) =>
+        note.title.toLowerCase().includes(keyword.toLowerCase())
       );
       setNotes(filteredNotes);
     } else {
-      setNotes(activeNotes);
+      setNotes(allNotes);
     }
-  }, [searchParams]);
+  }, [searchParams, allNotes]);
 
   const onChangeSearchParams = (keyword) => {
     setSearchParams({ title: keyword });
   };
 
-  const onDeleteHandler = (id) => {
-    const updatedNotes = deleteNote(id);
-    setNotes(updatedNotes);
+  const onDeleteHandler = async (id) => {
+    const { error } = await deleteNote(id);
+    if (!error) {
+      const { error, data } = await getActiveNotes();
+      if (!error) {
+        setNotes(data);
+        setAllNotes(data);
+      }
+    }
   };
 
-  const onArchiveHandler = (id) => {
-    archiveNote(id);
-    const updatedNotes = getActiveNotes();
-    setNotes(updatedNotes);
+  const onArchiveHandler = async (id) => {
+    const { error } = await archiveNote(id);
+    if (!error) {
+      const { error, data } = await getActiveNotes();
+      if (!error) {
+        setNotes(data);
+        setAllNotes(data);
+      }
+    }
   };
 
   return (
@@ -48,14 +72,16 @@ const HomePage = () => {
         keyword={searchParams.get("title") || ""}
         keywordChange={onChangeSearchParams}
       />
-      {notes.length > 0 ? (
+      {loading ? (
+        <h1>{locale === "id" ? "Memuat..." : "Loading..."}</h1>
+      ) : notes.length > 0 ? (
         <NoteList
           notes={notes}
           onDelete={onDeleteHandler}
           onArchive={onArchiveHandler}
         />
       ) : (
-        <p>Catatan Tidak Ditemukan</p>
+        <h1>{locale === "id" ? "Tidak ada catatan" : "No notes found"}</h1>
       )}
     </>
   );

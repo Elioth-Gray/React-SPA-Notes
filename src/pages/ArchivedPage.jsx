@@ -1,51 +1,69 @@
-import React, { useEffect, useState } from "react";
-import {
-  archiveNote,
-  deleteNote,
-  getArchivedNotes,
-  unarchiveNote,
-} from "../utils/local-data";
+import { useState, useEffect, useContext } from "react";
 import NoteList from "../Components/NoteList";
 import { useSearchParams } from "react-router-dom";
 import SearchBar from "../Components/SearchBar";
-import PropTypes from "prop-types";
+import { getArchivedNotes, unarchiveNote, deleteNote } from "../utils/api";
+import LocaleContext from "../Contexts/LocaleContext";
 
-const ArchivedPage = () => {
+const HomePage = () => {
   const [notes, setNotes] = useState([]);
+  const [allNotes, setAllNotes] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(true);
+  const { locale } = useContext(LocaleContext);
 
   useEffect(() => {
-    const archivedNotes = getArchivedNotes();
-    setNotes(archivedNotes);
+    const fetchNotes = async () => {
+      const { error, data } = await getArchivedNotes();
+      if (!error) {
+        setAllNotes(data);
+        setNotes(data);
+      }
+      setLoading(false);
+    };
+    fetchNotes();
+    return () => {
+      setNotes([]);
+      setAllNotes([]);
+    };
   }, []);
 
   useEffect(() => {
-    const archivedNotes = getArchivedNotes();
-    if (searchParams.has("title")) {
-      const updatedNotes = archivedNotes.filter((note) =>
-        note.title
-          .toLowerCase()
-          .includes(searchParams.get("title").toLowerCase())
+    const keyword = searchParams.get("title") || "";
+    if (keyword) {
+      const filteredNotes = allNotes.filter((note) =>
+        note.title.toLowerCase().includes(keyword.toLowerCase())
       );
-      setNotes(updatedNotes);
+      setNotes(filteredNotes);
     } else {
-      setNotes(archivedNotes);
+      setNotes(allNotes);
     }
-  }, [searchParams]);
+  }, [searchParams, allNotes]);
 
   const onChangeSearchParams = (keyword) => {
     setSearchParams({ title: keyword });
   };
 
-  const onDeleteHandler = (id) => {
-    const updatedNotes = deleteNote(id);
-    setNotes(updatedNotes);
+  const onDeleteHandler = async (id) => {
+    const { error } = await deleteNote(id);
+    if (!error) {
+      const { error, data } = await getArchivedNotes();
+      if (!error) {
+        setNotes(data);
+        setAllNotes(data);
+      }
+    }
   };
 
-  const onUnarchiveHandler = (id) => {
-    unarchiveNote(id);
-    const updatedNotes = getArchivedNotes();
-    setNotes(updatedNotes);
+  const onUnarchiveHandler = async (id) => {
+    const { error } = await unarchiveNote(id);
+    if (!error) {
+      const { error, data } = await getArchivedNotes();
+      if (!error) {
+        setNotes(data);
+        setAllNotes(data);
+      }
+    }
   };
 
   return (
@@ -53,18 +71,20 @@ const ArchivedPage = () => {
       <SearchBar
         keyword={searchParams.get("title") || ""}
         keywordChange={onChangeSearchParams}
-      ></SearchBar>
-      {notes.length > 0 ? (
+      />
+      {loading ? (
+        <h1>{locale === "id" ? "Memuat..." : "Loading..."}</h1>
+      ) : notes.length > 0 ? (
         <NoteList
           notes={notes}
           onDelete={onDeleteHandler}
           onArchive={onUnarchiveHandler}
         />
       ) : (
-        <p>Arsip Tidak Ditemukan</p>
+        <h1>{locale === "id" ? "Tidak ada arsip" : "No archives found"}</h1>
       )}
     </>
   );
 };
 
-export default ArchivedPage;
+export default HomePage;

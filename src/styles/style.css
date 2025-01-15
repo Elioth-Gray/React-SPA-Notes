@@ -52,6 +52,13 @@ header h1 {
   flex: 1;
 }
 
+.navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* Menyusun item secara horizontal di tengah */
+  align-items: center; /* Menyusun item secara vertikal di tengah */
+}
+
 header .navigation ul li {
   display: inline-block;
   font-size: 24px;

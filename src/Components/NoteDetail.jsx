@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
-import { showFormattedDate } from "../utils";
+import { showFormattedDateEN, showFormattedDateID } from "../utils";
+import LocaleContext from "../Contexts/LocaleContext";
 
 const NoteDetail = (note) => {
+  const { locale } = useContext(LocaleContext);
+
   if (note === undefined) {
     return <p>Detail tidak ditemukan</p>;
   }
@@ -11,7 +14,9 @@ const NoteDetail = (note) => {
     <section>
       <h1 className="detail-page__title">{note.title}</h1>
       <p className="detail-page__createdAt">
-        {showFormattedDate(note.createdAt)}
+        {locale === "id"
+          ? showFormattedDateID(note.createdAt)
+          : showFormattedDateEN(note.createdAt)}
       </p>
       <p className="detail-page__body">{note.body}</p>
     </section>

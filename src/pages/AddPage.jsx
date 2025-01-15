@@ -1,42 +1,33 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import NoteInput from "../Components/NoteInput";
-import { addNote } from "../utils/local-data";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
+import { addNote } from "../utils/api";
+import LocaleContext from "../Contexts/LocaleContext";
+import useInput from "../Hooks/useInput";
 
 const AddPage = () => {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { locale } = useContext(LocaleContext);
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = async ({ title, body }) => {
     event.preventDefault();
     if (title !== "" && body !== "") {
-      addNote({ title, body });
+      setLoading(true);
+      await addNote({ title, body });
+      setLoading(false);
       navigate("/");
     } else {
-      alert("Judul dan deksripsi harus diisi");
+      alert("Judul dan deskripsi harus diisi");
     }
-  };
-
-  const onTitleChangeHandler = (newTitle) => {
-    setTitle(newTitle);
-  };
-
-  const onBodyChangeHandler = (newBody) => {
-    setBody(newBody);
   };
 
   return (
     <section>
       <div>
-        <h1>Add New Notes</h1>
+        <h1>{locale === "id" ? "Tambah Catatan" : "Add Note"}</h1>
       </div>
-      <NoteInput
-        onBodyChange={onBodyChangeHandler}
-        onSubmitAction={onSubmitHandler}
-        onTitleChange={onTitleChangeHandler}
-      />
+      <NoteInput submit={onSubmitHandler} loading={loading} />
     </section>
   );
 };

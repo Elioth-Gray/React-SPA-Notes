@@ -1,39 +1,62 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Button from "./Button";
+import LocaleContext from "../Contexts/LocaleContext";
+import { useContext } from "react";
+import useInput from "../Hooks/useInput";
 
-const NoteInput = ({ onSubmitAction, onTitleChange, onBodyChange }) => {
+const NoteInput = ({ submit, loading }) => {
+  const [title, onTitleChangeHandler] = useInput("");
+  const [body, onBodyChangeHandler] = useInput("");
+  const { locale } = useContext(LocaleContext);
+
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    submit({ title, body });
+  };
+
   return (
-    <form onSubmit={onSubmitAction} className="add-new-page">
+    <form onSubmit={onSubmitHandler} className="add-new-page">
       <label htmlFor="title" className="add-new-page__input__title">
-        Title
+        {locale === "id" ? "Judul" : "Title"}
       </label>
       <input
         type="text"
         id="title"
-        placeholder="Note Title"
-        onChange={(event) => onTitleChange(event.target.value)}
+        placeholder={locale === "id" ? "Judul catatan" : "Note title"}
+        onChange={onTitleChangeHandler}
+        disabled={loading}
+        value={title}
       />
 
       <label htmlFor="body" className="add-new-page__input__body">
-        Description
+        {locale === "id" ? "Deskripsi" : "Description"}
       </label>
       <input
         type="text"
         id="body"
-        placeholder="Note Description"
-        onChange={(event) => onBodyChange(event.target.value)}
+        placeholder={locale === "id" ? "Deskripsi Catatan" : "Note description"}
+        onChange={onBodyChangeHandler}
+        disabled={loading}
+        value={body}
       />
 
-      <Button>Submit</Button>
+      <Button type="submit" disabled={loading}>
+        {loading
+          ? locale === "id"
+            ? "Memproses..."
+            : "Processing..."
+          : locale === "id"
+          ? "Tambah catatan"
+          : "Add note"}
+      </Button>
     </form>
   );
 };
 
 NoteInput.propTypes = {
-  onSubmitAction: PropTypes.func.isRequired,
-  onTitleChange: PropTypes.func.isRequired,
-  onBodyChange: PropTypes.func.isRequired,
+  submit: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 export default NoteInput;
